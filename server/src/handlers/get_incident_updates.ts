@@ -1,8 +1,19 @@
+import { db } from '../db';
+import { incidentUpdatesTable } from '../db/schema';
 import { type IncidentUpdate } from '../schema';
+import { eq, desc } from 'drizzle-orm';
 
 export const getIncidentUpdates = async (incidentId: number): Promise<IncidentUpdate[]> => {
-    // This is a placeholder declaration! Real code should be implemented here.
-    // The goal of this handler is fetching all updates for a specific incident from the database.
-    // Should order updates by created_at DESC and include proper authorization checks.
-    return Promise.resolve([]);
+  try {
+    const results = await db.select()
+      .from(incidentUpdatesTable)
+      .where(eq(incidentUpdatesTable.incident_id, incidentId))
+      .orderBy(desc(incidentUpdatesTable.created_at))
+      .execute();
+
+    return results;
+  } catch (error) {
+    console.error('Failed to get incident updates:', error);
+    throw error;
+  }
 };
